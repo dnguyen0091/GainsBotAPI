@@ -1,3 +1,6 @@
+import aiRoutes from './routes/aiRoutes.js';
+import authRoutes from './routes/authRoutes.js';
+
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
@@ -20,8 +23,10 @@ const startServer = async () => {
     });
     console.log('MongoDB connected');
 
-    app.user(cookieParser());
+    app.use(cookieParser());
+    
     app.use('/api/ai', aiRoutes);
+    app.use('/api/auth', authRoutes);
 
     app.get('/', (req, res) => {
       res.send('Welcome to the GainsBot API');
