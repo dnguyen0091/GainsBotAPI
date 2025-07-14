@@ -5,20 +5,42 @@ const cors = require('cors');
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.use(cors());
-app.use(express.json());
+const startServer = async () => {
+  try {
+    app.use(express.json());
+    app.use(cors({
+      origin: process.env.CLIENT_URL || 'http://localhost:3000',
+      credentials: true,
+    }));
+    
 
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => {
-  console.log('MongoDB connected');
-})
-.catch((err) => {
-  console.error('MongoDB connection error:', err);
-});
+    await mongoose.connect(process.env.MONGODB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log('MongoDB connected');
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+    app.user(cookieParser());
+    app.use('/api/ai', aiRoutes);
+
+    app.get('/', (req, res) => {
+      res.send('Welcome to the GainsBot API');
+    });
+    
+    app.use((err, req, res, next) => {
+      console.error(err.stack);
+      res.status(500).send('Something broke!');
+    });
+  
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
+
+  } catch (error) {
+    console.error('MongoDB connection error:', error);
+    process.exit(1);
+  }
+}
+
+startServer();
