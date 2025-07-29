@@ -1,5 +1,6 @@
 import aiRoutes from './routes/aiRoutes.js';
 import authRoutes from './routes/authRoutes.js';
+import chatHistoryRoutes from './routes/chatHistoryRoutes.js';
 
 require('dotenv').config();
 const express = require('express');
@@ -27,7 +28,7 @@ const startServer = async () => {
     
     app.use('/api/ai', aiRoutes);
     app.use('/api/auth', authRoutes);
-
+    app.use('/api/chatHistory', chatHistoryRoutes);
     app.get('/', (req, res) => {
       res.send('Welcome to the GainsBot API');
     });
@@ -43,7 +44,7 @@ const startServer = async () => {
     });
 
   } catch (error) {
-    console.error('MongoDB connection error:', error);
+    console.error('Connection error:', error);
     process.exit(1);
   }
 }
